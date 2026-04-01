@@ -1,3 +1,8 @@
 pybaseball
 pandas
 tqdm
+numpy
+xgboost
+scikit-learn
+streamlit
+plotly

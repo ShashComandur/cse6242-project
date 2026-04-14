@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.graph_objects as go
 from pathlib import Path
 import base64
+import joblib
 
 # config
 from config import PITCH_TYPES, STRIKE_ZONE, MOVEMENT_SCALE, MOVEMENT_THRESHOLD
@@ -14,6 +15,39 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+################# MODELING #################
+# Cache and load pitching model
+@st.cache_resource
+def load_pitching_model():
+    model_a = joblib.load('models/pitch_outcome_model.joblib')
+    labeler_a = joblib.load('models/pitch_outcome_labeler.joblib')
+    return model_a, labeler_a
+
+# Cache and load batting model
+@st.cache_resource
+def load_batting_model():
+    model_b = joblib.load('models/batted_outcome_model.joblib')
+    labeler_b = joblib.load('models/batted_outcome_labler.joblib')
+    return model_b, labeler_b
+
+def predict_pitch_outcome(model, labeler, user_inputs):
+    
+    user_inputs['stand'] = 1 if user_inputs['stand'] == 'R' else 0
+    user_inputs['p_throws'] = 1 if user_inputs['p_throws'] == 'R' else 0
+    
+    df = pd.DataFrame([user_inputs])
+    df['pitch_name'] = df['pitch_name'].astype('category')
+    
+    probs = model.predict_proba(df)[0]
+    
+    return dict(zip(labeler.classes_, probs))
+
+# Call fns to load in models
+batting_model, batting_labeler = load_batting_model()
+pitching_model, pitching_labeler = load_pitching_model()
+###################################################
+
 
 def load_svg(svg_path):
     try:
@@ -294,15 +328,34 @@ with col_viz:
     st.plotly_chart(catcher_fig, use_container_width=True)
     
     st.subheader("Outcome Probabilities")
+
+    current_pitch_data = {
+        'pitch_name': pitch_name,
+        'plate_x': plate_x,
+        'plate_z': plate_z,
+        'release_speed': release_speed,
+        'pfx_x': pfx_x,
+        'pfx_z': pfx_z,
+        'balls': balls,
+        'strikes': strikes,
+        'stand': stand, 
+        'p_throws': p_throws,
+        'release_extension': release_extension,
+        'arm_angle': arm_angle
+    }
+    
+    #  Pitching pred
+    results = predict_pitch_outcome(pitching_model, pitching_labeler, current_pitch_data)
+
     outcome_cols = st.columns(4)
     with outcome_cols[0]:
-        st.metric("Ball", "—%")
+        st.metric("Ball", f"{results.get('ball', 0) * 100:.1f}%")
     with outcome_cols[1]:
-        st.metric("Strike", "—%")
+        st.metric("Strike", f"{results.get('strike', 0) * 100:.1f}%")
     with outcome_cols[2]:
-        st.metric("Contact", "—%")
+        st.metric("Foul", f"{results.get('foul_ball', 0) * 100:.1f}%")
     with outcome_cols[3]:
-        st.metric("In Play", "—%")
+        st.metric("In Play", f"{results.get('in_play', 0) * 100:.1f}%")
 
 st.markdown("---")
 st.caption("CSE 6242 Project | Data from MLB Statcast (2021-2025)")

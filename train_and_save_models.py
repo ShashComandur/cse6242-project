@@ -101,9 +101,13 @@ print("\n------------MODEL A SAVED------------")
 
 ############################## MODEL 2 (Post contact outcome) #####################################
 contact_features = features + ['launch_speed_angle',
-                               'hc_x',
-                               'hc_y',
-                               'bb_type' # batted ball type (pop up, line drive, etc)
+                            #    'hc_x',
+                            #    'hc_y',
+                               'bb_type', # batted ball type (pop up, line drive, etc)
+                               'swing_length',
+                                'attack_angle',
+                                'bat_speed',
+                                'swing_path_tilt'
                                ]
 
 contact_target = 'hit_result'

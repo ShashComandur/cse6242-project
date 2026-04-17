@@ -42,6 +42,7 @@ features = [
     'plate_x', # Horizontal pitch location
     'plate_z', # Vertival pitch location
     'release_speed', # Release Speed of Pitch
+    'release_spin_rate',
     'pfx_x', # Horizontal pitch movement
     'pfx_z', # Vertical pitch movement
     'balls', # Current number of balls
@@ -98,9 +99,11 @@ print(classification_report(y_test, predictions, target_names=labler.classes_))
 
 ############################## MODEL 2 (Post contact outcome) #####################################
 contact_features = features + ['launch_speed_angle',
-                               'hc_x',
-                               'hc_y',
-                               'bb_type' # batted ball type (pop up, line drive, etc)
+                               'bb_type', # batted ball type (pop up, line drive, etc)
+                               'swing_length',
+                               'attack_angle',
+                               'bat_speed',
+                               'swing_path_tilt'
                                ]
 
 contact_target = 'hit_result'

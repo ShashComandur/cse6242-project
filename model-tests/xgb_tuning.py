@@ -99,13 +99,10 @@ print(classification_report(y_test, predictions, target_names=labler.classes_))
 
 ############################## MODEL 2 (Post contact outcome) #####################################
 contact_features = features + ['launch_speed_angle',
-                               'bb_type', # batted ball type (pop up, line drive, etc)
-                               'swing_length',
-                               'attack_angle',
-                               'bat_speed',
-                               'swing_path_tilt'
+                               'hc_x',
+                               'hc_y',
+                               'bb_type' # batted ball type (pop up, line drive, etc)
                                ]
-
 contact_target = 'hit_result'
 
 # In play only

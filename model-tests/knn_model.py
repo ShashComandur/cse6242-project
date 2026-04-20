@@ -41,6 +41,7 @@ features = [
     'plate_x', # Horizontal pitch location
     'plate_z', # Vertival pitch location
     'release_speed', # Release Speed of Pitch
+    'release_spin_rate',
     'pfx_x', # Horizontal pitch movement
     'pfx_z', # Vertical pitch movement
     'balls', # Current number of balls
@@ -74,6 +75,7 @@ numeric_features = [
     'plate_x',
     'plate_z',
     'release_speed',
+    'release_spin_rate',
     'pfx_x',
     'pfx_z',
     'balls',
@@ -199,6 +201,7 @@ numeric_features_B = [
     'plate_x',
     'plate_z',
     'release_speed',
+    'release_spin_rate',
     'pfx_x',
     'pfx_z',
     'balls',
